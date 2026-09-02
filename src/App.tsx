@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
+import "./App.css";
 
 type MemoryInfo = {
   total_gb: number;
@@ -12,7 +13,7 @@ function App() {
   const [cpu, setCpu] = useState<number | null>(null);
 
   useEffect(() => {
-    async function updateMemory() {
+    async function updateSystem() {
       const result = await invoke<MemoryInfo>("get_memory_info");
       const cpuResult = await invoke<number>("get_cpu_usage");
 
@@ -20,9 +21,9 @@ function App() {
       setCpu(cpuResult);
     }
 
-    updateMemory();
+    updateSystem();
 
-    const interval = setInterval(updateMemory, 1000);
+    const interval = setInterval(updateSystem, 1000);
 
     return () => clearInterval(interval);
   }, []);

@@ -2,6 +2,16 @@ use serde::Serialize;
 use sysinfo::System;
 use std::sync::Mutex;
 
+#[cfg(target_os = "windows")]
+fn memory_divisor() -> f64 {
+    1024.0 * 1024.0 * 1024.0
+}
+
+#[cfg(target_os = "linux")]
+fn memory_divisor() -> f64 {
+    1000.0 * 1000.0 * 1000.0
+}
+
 #[derive(Serialize)]
 struct MemoryInfo {
     total_gb: f64,
@@ -14,16 +24,19 @@ struct AppState {
 }
 
 #[tauri::command]
-fn get_memory_info() -> MemoryInfo {
-    let mut system = System::new_all();
+fn get_memory_info(state: tauri::State<AppState>) -> MemoryInfo {
+    let mut system = state.system.lock().unwrap();
+
     system.refresh_memory();
 
     let total = system.total_memory() as f64;
     let used = system.used_memory() as f64;
 
+    let divisor = memory_divisor();
+
     MemoryInfo {
-        total_gb: total / 1000.0 / 1000.0 / 1000.0,
-        used_gb: used / 1000.0 / 1000.0 / 1000.0,
+        total_gb: total / divisor,
+        used_gb: used / divisor,
         percentage: (used / total) * 100.0,
     }
 }
