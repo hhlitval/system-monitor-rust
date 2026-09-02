@@ -13,6 +13,13 @@ fn memory_divisor() -> f64 {
 }
 
 #[derive(Serialize)]
+struct ProcessInfo {
+    name: String,
+    pid: String,
+    cpu_usage: f32,
+}
+
+#[derive(Serialize)]
 struct MemoryInfo {
     total_gb: f64,
     used_gb: f64,
@@ -51,6 +58,39 @@ fn get_cpu_usage(state: tauri::State<AppState>) -> f32 {
     system.global_cpu_usage()
 }
 
+#[tauri::command]
+fn get_top_processes(state: tauri::State<AppState>) -> Vec<ProcessInfo> {
+    let mut system = state.system.lock().unwrap();
+
+    system.refresh_processes(
+        sysinfo::ProcessesToUpdate::All,
+        true,
+    );
+
+    let cpu_count = system.cpus().len() as f32;
+    println!("CPU count: {}", cpu_count);
+
+    let mut processes: Vec<ProcessInfo> = system
+        .processes()
+        .values()
+        .map(|process| ProcessInfo {
+            name: process.name().to_string_lossy().to_string(),
+            pid: process.pid().to_string(),
+            cpu_usage: process.cpu_usage() / cpu_count,
+        })
+        .collect();
+
+    processes.sort_by(|a, b| {
+        b.cpu_usage
+            .partial_cmp(&a.cpu_usage)
+            .unwrap()
+    });
+
+    processes.truncate(5);
+
+    processes
+}
+
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
     let mut system = System::new_all();
@@ -64,7 +104,8 @@ pub fn run() {
         .plugin(tauri_plugin_opener::init())
         .invoke_handler(tauri::generate_handler![
             get_memory_info,
-            get_cpu_usage
+            get_cpu_usage,
+            get_top_processes
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
