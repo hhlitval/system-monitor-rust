@@ -68,7 +68,6 @@ fn get_top_processes(state: tauri::State<AppState>) -> Vec<ProcessInfo> {
     );
 
     let cpu_count = system.cpus().len() as f32;
-    println!("CPU count: {}", cpu_count);
 
     let mut processes: Vec<ProcessInfo> = system
         .processes()
