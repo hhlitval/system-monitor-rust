@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter+Tight:ital,wght@0,100..900;1,100..900&display=swap');
+
 *,
 *::before,
 *::after {
@@ -7,20 +9,11 @@
 }
 
 :root {
-  font-family:
-    Inter Tight,
-    Avenir,
-    Helvetica,
-    Arial,
-    sans-serif;
-  font-size: 16px;
+  font-family: 'Inter Tight', sans-serif;
+  font-size: 12px;
   color: #1a1a1a;
+  font-weight: 400;
   background-color: #f0f0f0;
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
 }
 
 /* .container {
@@ -54,15 +47,22 @@ a:hover {
   border-radius: 12px;
 
   h2 {
+    font-size: 14px;
+    font-weight: 500;
+    /* color: #424242; */
     margin-bottom: 12px;
-  }
-
-  &__subtitle {
-    font-size: 12px;
   }
 }
 
+.info-card__subtitle {
+  margin-top: 12px;
+  font-size: 12px;
+  color: #424242;
+}
+
 .percent_usage {
+  font-size: 28px;
+  font-weight: 400;
   margin-bottom: 0;
 }
 
