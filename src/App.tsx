@@ -8,26 +8,26 @@ type MemoryInfo = {
   percentage: number;
 };
 
-// type ProcessInfo = {
-//   name: string;
-//   pid: string;
-//   cpu_usage: number;
-// };
+type ProcessInfo = {
+  name: string;
+  pid: string;
+  cpu_usage: number;
+};
 
 function App() {
   const [cpu, setCpu] = useState<number | null>(null);
   const [memory, setMemory] = useState<MemoryInfo | null>(null);
-  // const [processes, setProcesses] = useState<ProcessInfo[]>([]);
+  const [processes, setProcesses] = useState<ProcessInfo[]>([]);
 
   useEffect(() => {
     async function updateSystemData() {
       const cpuResult = await invoke<number>('get_cpu_usage');
       const memoryResult = await invoke<MemoryInfo>('get_memory_info');
-      // const processResult = await invoke<ProcessInfo[]>('get_top_processes');
+      const processResult = await invoke<ProcessInfo[]>('get_top_processes');
 
       setCpu(cpuResult);
       setMemory(memoryResult);
-      // setProcesses(processResult);
+      setProcesses(processResult);
     }
 
     updateSystemData();
@@ -42,7 +42,7 @@ function App() {
       <div className="info-card">
         {cpu !== null && (
           <div>
-            <h2>CPU</h2>
+            <h2>CPU Auslastung</h2>
             <p className="percent_usage">{cpu.toFixed(1)} %</p>
             <progress value={cpu} max="100" />
           </div>
@@ -51,7 +51,7 @@ function App() {
       <div className="info-card">
         {memory ? (
           <div>
-            <h2>RAM</h2>
+            <h2>RAM Auslastung</h2>
             <p className="percent_usage">{memory.percentage.toFixed(1)} %</p>
             <progress value={memory.percentage} max="100" />
             <p className="info-card__subtitle">
@@ -64,14 +64,14 @@ function App() {
         )}
       </div>
       <div>
-        {/* <h2>Top 5 Prozesse</h2> */}
-        {/* {processes.map((process) => (
+        <h2>Top 5 Prozesse</h2>
+        {processes.map((process) => (
           <div key={process.pid}>
             <strong>{process.name}</strong>
             {' — '}
             {process.cpu_usage.toFixed(1)} %
           </div>
-        ))} */}
+        ))}
       </div>
     </main>
   );
