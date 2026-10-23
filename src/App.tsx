@@ -8,26 +8,17 @@ type MemoryInfo = {
   percentage: number;
 };
 
-type ProcessInfo = {
-  name: string;
-  pid: string;
-  cpu_usage: number;
-};
-
 function App() {
   const [cpu, setCpu] = useState<number | null>(null);
   const [memory, setMemory] = useState<MemoryInfo | null>(null);
-  const [processes, setProcesses] = useState<ProcessInfo[]>([]);
 
   useEffect(() => {
     async function updateSystemData() {
       const cpuResult = await invoke<number>('get_cpu_usage');
       const memoryResult = await invoke<MemoryInfo>('get_memory_info');
-      const processResult = await invoke<ProcessInfo[]>('get_top_processes');
 
       setCpu(cpuResult);
       setMemory(memoryResult);
-      setProcesses(processResult);
     }
 
     updateSystemData();
@@ -62,17 +53,7 @@ function App() {
         ) : (
           <p>RAM wird ermittelt...</p>
         )}
-      </div>
-      <div>
-        <h2>Top 5 Prozesse</h2>
-        {processes.map((process) => (
-          <div key={process.pid}>
-            <strong>{process.name}</strong>
-            {' — '}
-            {process.cpu_usage.toFixed(1)} %
-          </div>
-        ))}
-      </div>
+      </div>      
     </main>
   );
 }
